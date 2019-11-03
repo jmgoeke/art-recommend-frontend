@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>What's that thing?</title>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="/__/firebase/7.2.3/firebase-app.js"></script>
+    <script defer src="/__/firebase/7.2.3/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.2.3/firebase-storage.js"></script>
+    <script defer src="/__/firebase/init.js"></script>
+    <script src="drop.js"></script>
+    <style>
+      #drop * { pointer-events: none }
+      .green { background-color: lightgreen }
+    </style>
+  </head>
+  <body style="font-family: Roboto, sans-serif; font-size: 16px; width: 2000px">
+    <div id="drop" style="border: 1px solid red; padding: 8px 24px 8px 24px; display: inline-block; margin-bottom: 4px;">
+      <span>Drop images here 🎅🎄🎁🤶</span>
+    </div>
+    <div id="log">
+      <div id="template" class="entry" style="margin-bottom: 2px; display: none">
+        <img style="width: 50px; height: 50px; object-fit: cover" src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/585d0331234507.564a1d239ac5e.gif"/>
+        <div style="display: inline-block; vertical-align: top">
+          <table style="border: 0px">
+            <tr><td style="text-align: right">URL: </td><td><a class="url" href="https://asdf/" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap">http://howdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdy/howdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdyhowdy</a></td></tr>
+            <tr><td style="text-align: right">Labels: </td><td class="labels" style="color: green"></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
