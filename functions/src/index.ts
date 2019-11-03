@@ -16,6 +16,8 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as path from 'path'
 import * as request from "request-promise-native";
+
+//import * as request from "request-promise-native";
 //const { ImageAnnotatorClient } = require('@google-cloud/vision')
 
 admin.initializeApp()
@@ -225,6 +227,28 @@ admin.initializeApp()
 //     ]
 //   }
 
+// function getRequest(url: string): Promise<any> {
+//   return new Promise<any>(
+//     function (resolve, reject) {
+//       const request = new XMLHttpRequest();
+//       request.onload = function () {
+//         if (this.status === 200) {
+//           resolve(this.response);
+//         } else {
+//           reject(new Error(this.statusText));
+//         }
+//       };
+//       request.onerror = function () {
+//         reject(new Error('XMLHttpRequest Error: ' + this.statusText));
+//       };
+//       request.open('GET', url);
+//       request.send();
+//     }
+//   )
+// };
+
+
+
 export const onUploadImage = functions.storage.object().onFinalize(async object => {
     const parts = object.name ? path.parse(object.name) : null;
 
@@ -238,7 +262,51 @@ export const onUploadImage = functions.storage.object().onFinalize(async object 
 
     // Pass the Cloud Storage URL directly to the Cloud Vision API
     // const client = new ImageAnnotatorClient()
-    const inStorage = `gs://${object.bucket}/${object.name}`
+    //const inStorage = `gs://${object.bucket}/${object.name}`
+    const outsideUrl = 'https://firebasestorage.googleapis.com/v0/b/' + object.bucket + '/o/' + object.name + '?alt=media&token=' + object.downloadTokens;
+    const baseUrl = 'https://art-match-api.appspot.com/api/v1/image/neighbor';
+    const queryString = '?url=' + inStorage + '&count=40';
+
+    (async () => {
+      var options = {
+        uri: outsideUrl + queryString,
+      };
+
+      const result = await request.get(options);
+      await admin.database().ref(`images/${parts.name}`).update({
+        similar: JSON.parse(result),
+        id: Math.random().toString(36).substring(7)
+      })
+    })();
+
+    // var options = {
+    //     uri: baseUrl + queryString,
+    //     headers: {
+    //         'User-Agent': 'Request-Promise'
+    //     },
+    //     json: true // Automatically parses the JSON string in the response
+    // };
+   
+    // rp(options)
+    //   .then(function (repos) {
+    //       console.log('User has %d repos', repos.length);
+    //   })
+    //   .catch(function (err) {
+    //       // API call failed...
+    //   });
+
+    // getRequest(baseUrl + queryString)
+    // .then(async response => {
+    //   console.log(response);
+
+    //   await admin.database().ref(`images/${parts.name}`).update({
+    //     similar: JSON.parse(response),
+    //     id: Math.random().toString(36).substring(7)
+    //   })
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // });
 
     // const [ results ] = await client.labelDetection(inStorage)
     // const labels = results.labelAnnotations
@@ -256,20 +324,34 @@ export const onUploadImage = functions.storage.object().onFinalize(async object 
     //   "mimeType": "multipart/form-data",
     //   "data": form
     // }
-    const baseUrl = 'http://0.0.0.0:5000/api/v1/image/neighbor';
-    const queryString = '?url=' + inStorage + '&count=40';
-    var options = {
-        uri: baseUrl + queryString,
-    };
-  
-    const result = await request.get(options);
+    // const baseUrl = 'https://art-match-api.appspot.com/api/v1/image/neighbor?';
+    // const queryString = '?url=' + inStorage + '&count=40';
+    // var options = {
+    //     uri: baseUrl + queryString,
+    // };
+ 
+    // performRequest(
+    //   {
+    //     host: 'https://art-match-api.appspot.com',
+    //     path: 'api/v1/image/neighbor' + '?url=' + inStorage + '&count=40',
+    //     method: 'GET',
+    //   },
+    // )
+    //   .then(response => {
+    //     console.log(response);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+
+    // const result = await request.get(options);
     
-    "http://0.0.0.0:5000/api/v1/image/neighbor?url=https%3A%2F%2Fimages.nga.gov%2F%3Fservice%3Dasset%26action%3Dshow_preview%26asset%3D33295&count=5"
+    //"http://0.0.0.0:5000/api/v1/image/neighbor?url=https%3A%2F%2Fimages.nga.gov%2F%3Fservice%3Dasset%26action%3Dshow_preview%26asset%3D33295&count=5"
     
-    await admin.database().ref(`images/${parts.name}`).update({
-      similar: JSON.parse(result),
-      id: Math.random().toString(36).substring(7)
-    })
+    // await admin.database().ref(`images/${parts.name}`).update({
+    //   similar: JSON.parse(result),
+    //   id: Math.random().toString(36).substring(7)
+    // })
 
     // $.ajax({
     //   "async": true,
