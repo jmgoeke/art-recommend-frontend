@@ -263,13 +263,13 @@ export const onUploadImage = functions.storage.object().onFinalize(async object 
     // Pass the Cloud Storage URL directly to the Cloud Vision API
     // const client = new ImageAnnotatorClient()
     //const inStorage = `gs://${object.bucket}/${object.name}`
-    const outsideUrl = 'https://firebasestorage.googleapis.com/v0/b/' + object.bucket + '/o/' + object.name + '?alt=media&token=' + object.downloadTokens;
+    const outsideUrl = `https://firebasestorage.googleapis.com/v0/b/art-recommend.appspot.com/o/${object.name.replace('/', '%2F')}?alt=media`;
     const baseUrl = 'https://art-match-api.appspot.com/api/v1/image/neighbor';
-    const queryString = '?url=' + inStorage + '&count=40';
+    const queryString = '?url=' + encodeURI(outsideUrl) + '&count=40';
 
     (async () => {
       var options = {
-        uri: outsideUrl + queryString,
+        uri: baseUrl + queryString,
       };
 
       const result = await request.get(options);

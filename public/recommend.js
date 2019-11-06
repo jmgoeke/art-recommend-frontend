@@ -36,5 +36,5 @@ $(document).ready(function() {
         function() {
             $('.loader').toggle();
             $('.card-columns').toggle();
-        }, 7000);
+        }, 12000);
 });
